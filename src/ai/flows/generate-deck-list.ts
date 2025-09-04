@@ -34,11 +34,13 @@ const prompt = ai.definePrompt({
   name: 'generateDeckListPrompt',
   input: {schema: GenerateDeckListInputSchema},
   output: {schema: GenerateDeckListOutputSchema},
-  prompt: `You are an expert web scraper and data formatter.
+  prompt: `You are an expert web scraper and data formatter for Magic: The Gathering content.
 
-  You will scrape Jumpstart: Foundations deck lists from the provided URL. Extract all deck names and card details and output them as a JSON string.
+  You will scrape Jumpstart: Foundations deck themes from the provided URL. The themes are organized by mana color (White, Blue, Black, Red, Green).
 
-  The JSON should be an array of objects, where each object represents a deck and has 'name', 'cards', and 'set' properties. The 'cards' property should be an array of strings. The 'set' property should always be 'Foundations'.
+  Extract all deck theme names and their corresponding color. Output them as a JSON string.
+
+  The JSON should be an array of objects, where each object represents a deck and has 'name', 'color', and 'set' properties. The 'set' property should always be 'Foundations'. The 'color' property should be one of 'White', 'Blue', 'Black', 'Red', or 'Green'.
 
   URL: {{{url}}}`,
 });

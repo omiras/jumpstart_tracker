@@ -5,7 +5,7 @@ import { generateDeckList } from "@/ai/flows/generate-deck-list";
 import type { Deck } from "@/lib/types";
 
 // URL for Jumpstart: Foundations decklists.
-const DECKLIST_URL = "https://mtg.fandom.com/wiki/Jumpstart/Foundations_decklists";
+const DECKLIST_URL = "https://magic.wizards.com/en/news/announcements/foundations-jumpstart-booster-themes";
 
 /**
  * Fetches and parses Jumpstart deck lists using a GenAI-powered web scraper.

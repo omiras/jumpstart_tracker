@@ -2,7 +2,7 @@
 "use client";
 
 import type { Dispatch, SetStateAction } from "react";
-import type { Deck, PlayerDecks } from "@/lib/types";
+import type { Deck, PlayerDecks, ManaColor } from "@/lib/types";
 import {
   Select,
   SelectContent,
@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Book } from "lucide-react";
+import { Sun, Waves, Skull, Mountain, Leaf } from "lucide-react";
 
 interface DeckSelectorProps {
   title: string;
@@ -20,6 +20,18 @@ interface DeckSelectorProps {
   playerDecks: PlayerDecks;
   onDeckChange: Dispatch<SetStateAction<PlayerDecks>>;
 }
+
+const ManaIcon = ({ color }: { color: ManaColor }) => {
+    const iconProps = { className: "w-4 h-4 text-muted-foreground" };
+    switch (color) {
+        case 'White': return <Sun {...iconProps} />;
+        case 'Blue': return <Waves {...iconProps} />;
+        case 'Black': return <Skull {...iconProps} />;
+        case 'Red': return <Mountain {...iconProps} />;
+        case 'Green': return <Leaf {...iconProps} />;
+        default: return null;
+    }
+};
 
 export default function DeckSelector({
   title,
@@ -56,7 +68,7 @@ export default function DeckSelector({
               {getAvailableDecks(playerDecks.deckA).map((deck) => (
                 <SelectItem key={deck.name} value={deck.name}>
                   <div className="flex items-center gap-2">
-                    {deck.set === 'Foundations' && <Book className="w-4 h-4 text-muted-foreground" />}
+                    <ManaIcon color={deck.color} />
                     <span>{deck.name}</span>
                   </div>
                 </SelectItem>
@@ -79,7 +91,7 @@ export default function DeckSelector({
               {getAvailableDecks(playerDecks.deckB).map((deck) => (
                 <SelectItem key={deck.name} value={deck.name}>
                   <div className="flex items-center gap-2">
-                    {deck.set === 'Foundations' && <Book className="w-4 h-4 text-muted-foreground" />}
+                    <ManaIcon color={deck.color} />
                     <span>{deck.name}</span>
                   </div>
                 </SelectItem>

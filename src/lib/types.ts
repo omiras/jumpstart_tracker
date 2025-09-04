@@ -1,7 +1,9 @@
 
+export type ManaColor = 'White' | 'Blue' | 'Black' | 'Red' | 'Green';
+
 export interface Deck {
   name: string;
-  cards: string[];
+  color: ManaColor;
   set: string;
 }
 
