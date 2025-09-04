@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -37,7 +38,7 @@ const prompt = ai.definePrompt({
 
   You will scrape Jumpstart: Foundations deck lists from the provided URL. Extract all deck names and card details and output them as a JSON string.
 
-  The JSON should be an array of objects, where each object represents a deck and has 'name' and 'cards' properties. The 'cards' property should be an array of strings.
+  The JSON should be an array of objects, where each object represents a deck and has 'name', 'cards', and 'set' properties. The 'cards' property should be an array of strings. The 'set' property should always be 'Foundations'.
 
   URL: {{{url}}}`,
 });

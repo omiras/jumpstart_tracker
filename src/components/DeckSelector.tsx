@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Book } from "lucide-react";
 
 interface DeckSelectorProps {
   title: string;
@@ -54,7 +55,10 @@ export default function DeckSelector({
             <SelectContent>
               {getAvailableDecks(playerDecks.deckA).map((deck) => (
                 <SelectItem key={deck.name} value={deck.name}>
-                  {deck.name}
+                  <div className="flex items-center gap-2">
+                    {deck.set === 'Foundations' && <Book className="w-4 h-4 text-muted-foreground" />}
+                    <span>{deck.name}</span>
+                  </div>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -74,7 +78,10 @@ export default function DeckSelector({
             <SelectContent>
               {getAvailableDecks(playerDecks.deckB).map((deck) => (
                 <SelectItem key={deck.name} value={deck.name}>
-                  {deck.name}
+                  <div className="flex items-center gap-2">
+                    {deck.set === 'Foundations' && <Book className="w-4 h-4 text-muted-foreground" />}
+                    <span>{deck.name}</span>
+                  </div>
                 </SelectItem>
               ))}
             </SelectContent>

@@ -2,6 +2,7 @@
 export interface Deck {
   name: string;
   cards: string[];
+  set: string;
 }
 
 export interface PlayerDecks {
