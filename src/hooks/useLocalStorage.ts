@@ -1,24 +1,27 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 
 type SetValue<T> = (value: T | ((val: T) => T)) => void;
 
 export function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T>] {
+  // Memoize the initialValue to prevent it from being recreated on every render
+  const memoizedInitialValue = useMemo(() => initialValue, []);
+
   const readValue = useCallback((): T => {
     if (typeof window === "undefined") {
-      return initialValue;
+      return memoizedInitialValue;
     }
 
     try {
       const item = window.localStorage.getItem(key);
-      return item ? (JSON.parse(item) as T) : initialValue;
+      return item ? (JSON.parse(item) as T) : memoizedInitialValue;
     } catch (error) {
       console.warn(`Error reading localStorage key “${key}”:`, error);
-      return initialValue;
+      return memoizedInitialValue;
     }
-  }, [initialValue, key]);
+  }, [memoizedInitialValue, key]);
 
   const [storedValue, setStoredValue] = useState<T>(readValue);
 
