@@ -138,6 +138,15 @@ export default function GameTracker() {
     setGameState("setup");
     setStrategy("");
   };
+
+  const handleClearHistory = () => {
+    setGameHistory([]);
+    setDeckStats({});
+    toast({
+      title: "Data Cleared",
+      description: "All game history and deck stats have been removed.",
+    });
+  }
   
   return (
     <div className="space-y-8">
@@ -253,7 +262,7 @@ export default function GameTracker() {
 
       <Separator />
 
-      <History history={gameHistory} stats={deckStats} />
+      <History history={gameHistory} stats={deckStats} onClearHistory={handleClearHistory} />
 
     </div>
   );

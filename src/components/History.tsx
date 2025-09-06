@@ -2,19 +2,32 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { History as HistoryIcon, BarChart2, Shield, ShieldCheck, ShieldX } from "lucide-react";
+import { History as HistoryIcon, BarChart2, Shield, ShieldCheck, ShieldX, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import type { GameRecord, DeckCombinationStats } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 interface HistoryProps {
   history: GameRecord[];
   stats: DeckCombinationStats;
+  onClearHistory: () => void;
 }
 
-export default function History({ history, stats }: HistoryProps) {
+export default function History({ history, stats, onClearHistory }: HistoryProps) {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -22,6 +35,7 @@ export default function History({ history, stats }: HistoryProps) {
   }, []);
 
   const rankings = useMemo(() => {
+    if (!isClient) return [];
     return Object.entries(stats)
       .map(([combination, data]) => {
         const totalGames = data.wins + data.losses;
@@ -34,14 +48,38 @@ export default function History({ history, stats }: HistoryProps) {
         };
       })
       .sort((a, b) => b.winRate - a.winRate || b.totalGames - a.totalGames);
-  }, [stats]);
+  }, [stats, isClient]);
   
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <HistoryIcon /> Game Archives
-        </CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle className="flex items-center gap-2">
+            <HistoryIcon /> Game Archives
+          </CardTitle>
+          {isClient && history.length > 0 && (
+             <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" size="sm">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Clear All Data
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete all your game history and deck statistics.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={onClearHistory}>Continue</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="log">
