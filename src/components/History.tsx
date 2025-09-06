@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { History as HistoryIcon, BarChart2, Shield, ShieldCheck, ShieldX } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,6 +15,11 @@ interface HistoryProps {
 }
 
 export default function History({ history, stats }: HistoryProps) {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const rankings = useMemo(() => {
     return Object.entries(stats)
@@ -61,25 +66,32 @@ export default function History({ history, stats }: HistoryProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {history.length === 0 && (
+                  {isClient && history.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={4} className="text-center text-muted-foreground">
                         No games played yet.
                       </TableCell>
                     </TableRow>
-                  )}
-                  {history.map((game) => (
-                    <TableRow key={game.id}>
-                      <TableCell>
-                        <Badge variant={game.winner === 'player1' ? 'default' : 'secondary'}>
-                          {game.winner === "player1" ? "Player 1" : "Player 2"}
-                        </Badge>
+                  ) : !isClient ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center text-muted-foreground">
+                        Loading history...
                       </TableCell>
-                      <TableCell>{game.player1Decks.deckA} + {game.player1Decks.deckB}</TableCell>
-                      <TableCell>{game.player2Decks.deckA} + {game.player2Decks.deckB}</TableCell>
-                      <TableCell>{new Date(game.date).toLocaleDateString()}</TableCell>
                     </TableRow>
-                  ))}
+                  ) : (
+                    history.map((game) => (
+                      <TableRow key={game.id}>
+                        <TableCell>
+                          <Badge variant={game.winner === 'player1' ? 'default' : 'secondary'}>
+                            {game.winner === "player1" ? "Player 1" : "Player 2"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{game.player1Decks.deckA} + {game.player1Decks.deckB}</TableCell>
+                        <TableCell>{game.player2Decks.deckA} + {game.player2Decks.deckB}</TableCell>
+                        <TableCell>{new Date(game.date).toLocaleDateString()}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>
@@ -99,27 +111,34 @@ export default function History({ history, stats }: HistoryProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                   {rankings.length === 0 && (
+                  {isClient && rankings.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={6} className="text-center text-muted-foreground">
                         Play some games to see rankings.
                       </TableCell>
                     </TableRow>
+                  ) : !isClient ? (
+                     <TableRow>
+                        <TableCell colSpan={6} className="text-center text-muted-foreground">
+                          Loading rankings...
+                        </TableCell>
+                      </TableRow>
+                  ) : (
+                    rankings.map((rank, index) => (
+                      <TableRow key={rank.combination}>
+                        <TableCell className="font-medium">{index + 1}</TableCell>
+                        <TableCell>{rank.combination}</TableCell>
+                        <TableCell className="text-center">
+                          <Badge className="w-16 justify-center" style={{backgroundColor: `hsl(120, 60%, ${100-rank.winRate/2}%)`, color: rank.winRate > 50 ? 'black' : 'white'}}>
+                              {rank.winRate.toFixed(0)}%
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center flex items-center justify-center gap-1 text-green-500"><ShieldCheck className="h-4 w-4" />{rank.wins}</TableCell>
+                        <TableCell className="text-center flex items-center justify-center gap-1 text-red-500"><ShieldX className="h-4 w-4" />{rank.losses}</TableCell>
+                        <TableCell className="text-center flex items-center justify-center gap-1 text-blue-500"><Shield className="h-4 w-4" />{rank.totalGames}</TableCell>
+                      </TableRow>
+                    ))
                   )}
-                  {rankings.map((rank, index) => (
-                    <TableRow key={rank.combination}>
-                      <TableCell className="font-medium">{index + 1}</TableCell>
-                      <TableCell>{rank.combination}</TableCell>
-                      <TableCell className="text-center">
-                        <Badge className="w-16 justify-center" style={{backgroundColor: `hsl(120, 60%, ${100-rank.winRate/2}%)`, color: rank.winRate > 50 ? 'black' : 'white'}}>
-                            {rank.winRate.toFixed(0)}%
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-center flex items-center justify-center gap-1 text-green-500"><ShieldCheck className="h-4 w-4" />{rank.wins}</TableCell>
-                      <TableCell className="text-center flex items-center justify-center gap-1 text-red-500"><ShieldX className="h-4 w-4" />{rank.losses}</TableCell>
-                      <TableCell className="text-center flex items-center justify-center gap-1 text-blue-500"><Shield className="h-4 w-4" />{rank.totalGames}</TableCell>
-                    </TableRow>
-                  ))}
                 </TableBody>
               </Table>
             </div>
