@@ -69,11 +69,11 @@ export default function GameTracker() {
   ].filter(Boolean), [player1Decks, player2Decks]);
 
   const handleStartGame = async () => {
-    if (selectedDecks.length !== 4) {
+    if (selectedDecks.length !== 4 || selectedDecks.some(d => selectedDecks.indexOf(d) !== selectedDecks.lastIndexOf(d))) {
       toast({
         variant: "destructive",
-        title: "Incomplete Selection",
-        description: "Both players must select two decks.",
+        title: "Invalid Selection",
+        description: "Both players must select two unique decks.",
       });
       return;
     }
