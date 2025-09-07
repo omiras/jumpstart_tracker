@@ -34,14 +34,21 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T
       }
 
       try {
-        const newValue = value instanceof Function ? value(storedValue) : value;
-        window.localStorage.setItem(key, JSON.stringify(newValue));
-        setStoredValue(newValue);
+        // Use functional update to avoid relying on a possibly stale `storedValue` closure.
+        setStoredValue((prev) => {
+          const newValue = value instanceof Function ? (value as (val: T) => T)(prev) : value;
+          try {
+            window.localStorage.setItem(key, JSON.stringify(newValue));
+          } catch (e) {
+            console.warn(`Error writing localStorage key “${key}”:`, e);
+          }
+          return newValue;
+        });
       } catch (error) {
         console.warn(`Error setting localStorage key “${key}”:`, error);
       }
     },
-    [key, storedValue]
+    [key]
   );
   
   useEffect(() => {

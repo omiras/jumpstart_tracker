@@ -36,7 +36,9 @@ export default function History({ history, stats, onClearHistory }: HistoryProps
 
   const rankings = useMemo(() => {
     if (!isClient) return [];
+    // Show all combinations with at least one game played (wins OR losses)
     return Object.entries(stats)
+      .filter(([_, data]) => (data.wins + data.losses) > 0)
       .map(([combination, data]) => {
         const totalGames = data.wins + data.losses;
         const winRate = totalGames > 0 ? (data.wins / totalGames) * 100 : 0;
@@ -174,32 +176,36 @@ export default function History({ history, stats, onClearHistory }: HistoryProps
                         </TableCell>
                       </TableRow>
                   ) : (
-                    rankings.map((rank, index) => (
-                      <TableRow key={rank.combination}>
-                        <TableCell className="font-medium">{index + 1}</TableCell>
-                        <TableCell>{rank.combination}</TableCell>
-                        <TableCell className="text-center">
-                          <Badge className="w-16 justify-center" style={{backgroundColor: `hsl(120, 60%, ${100-rank.winRate/2}%)`, color: rank.winRate > 50 ? 'black' : 'white'}}>
+                    rankings.map((rank, index) => {
+                      const lightness = Math.round(100 - rank.winRate / 2);
+                      const textColor = lightness > 60 ? 'black' : 'white';
+                      return (
+                        <TableRow key={rank.combination}>
+                          <TableCell className="font-medium">{index + 1}</TableCell>
+                          <TableCell>{rank.combination}</TableCell>
+                          <TableCell className="text-center">
+                            <Badge className="w-16 justify-center" style={{ backgroundColor: `hsl(120, 60%, ${lightness}%)`, color: textColor }}>
                               {rank.winRate.toFixed(0)}%
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <div className="flex items-center justify-center gap-1 text-green-500">
-                            <ShieldCheck className="h-4 w-4" />{rank.wins}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <div className="flex items-center justify-center gap-1 text-red-500">
-                            <ShieldX className="h-4 w-4" />{rank.losses}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-center">
-                           <div className="flex items-center justify-center gap-1 text-blue-500">
-                            <Shield className="h-4 w-4" />{rank.totalGames}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <div className="flex items-center justify-center gap-1 text-green-500">
+                              <ShieldCheck className="h-4 w-4" />{rank.wins}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <div className="flex items-center justify-center gap-1 text-red-500">
+                              <ShieldX className="h-4 w-4" />{rank.losses}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <div className="flex items-center justify-center gap-1 text-blue-500">
+                              <Shield className="h-4 w-4" />{rank.totalGames}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
                   )}
                 </TableBody>
               </Table>
