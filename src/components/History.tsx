@@ -171,9 +171,21 @@ export default function History({ history, stats, onClearHistory }: HistoryProps
                               {rank.winRate.toFixed(0)}%
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-center flex items-center justify-center gap-1 text-green-500"><ShieldCheck className="h-4 w-4" />{rank.wins}</TableCell>
-                        <TableCell className="text-center flex items-center justify-center gap-1 text-red-500"><ShieldX className="h-4 w-4" />{rank.losses}</TableCell>
-                        <TableCell className="text-center flex items-center justify-center gap-1 text-blue-500"><Shield className="h-4 w-4" />{rank.totalGames}</TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1 text-green-500">
+                            <ShieldCheck className="h-4 w-4" />{rank.wins}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1 text-red-500">
+                            <ShieldX className="h-4 w-4" />{rank.losses}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center">
+                           <div className="flex items-center justify-center gap-1 text-blue-500">
+                            <Shield className="h-4 w-4" />{rank.totalGames}
+                          </div>
+                        </TableCell>
                       </TableRow>
                     ))
                   )}
