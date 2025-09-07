@@ -2,7 +2,7 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { History as HistoryIcon, BarChart2, Shield, ShieldCheck, ShieldX, Trash2, BrainCircuit } from "lucide-react";
+import { History as HistoryIcon, BarChart2, Shield, ShieldCheck, ShieldX, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -20,76 +20,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { getJumpstartDeckRecommendations } from "@/ai/flows/get-jumpstart-deck-recommendations";
-import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
 
 interface HistoryProps {
   history: GameRecord[];
   stats: DeckCombinationStats;
   onClearHistory: () => void;
 }
-
-const Recommendations = ({ history, stats }: { history: GameRecord[], stats: DeckCombinationStats }) => {
-    const [recommendations, setRecommendations] = useState<string[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const { toast } = useToast();
-
-    const handleGetRecommendations = async () => {
-        setIsLoading(true);
-        setRecommendations([]);
-        try {
-            const playHistory = `
-                Game History: ${JSON.stringify(history.slice(0, 10))}
-                Deck Stats: ${JSON.stringify(stats)}
-            `;
-            const result = await getJumpstartDeckRecommendations({ playHistory });
-            setRecommendations(result.recommendations);
-        } catch (error) {
-            console.error(error);
-            toast({
-                variant: "destructive",
-                title: "AI Error",
-                description: "Could not generate recommendations. Please try again later.",
-            });
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    return (
-        <div className="text-center">
-            <p className="text-muted-foreground mb-4">
-                Get AI-powered deck suggestions based on your recent games and win rates.
-            </p>
-            <Button onClick={handleGetRecommendations} disabled={isLoading}>
-                {isLoading ? (
-                    <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Generating...
-                    </>
-                ) : (
-                    <>
-                        <BrainCircuit className="mr-2 h-4 w-4" />
-                        Generate Recommendations
-                    </>
-                )}
-            </Button>
-
-            {recommendations.length > 0 && (
-                <div className="mt-6 text-left">
-                    <h3 className="text-lg font-semibold mb-2">Here are some decks you might enjoy:</h3>
-                    <ul className="list-disc list-inside space-y-2 rounded-md border bg-secondary/50 p-4">
-                        {recommendations.map((rec, index) => (
-                            <li key={index} className="text-sm">{rec}</li>
-                        ))}
-                    </ul>
-                </div>
-            )}
-        </div>
-    );
-};
-
 
 export default function History({ history, stats, onClearHistory }: HistoryProps) {
   const [isClient, setIsClient] = useState(false);
@@ -147,15 +83,12 @@ export default function History({ history, stats, onClearHistory }: HistoryProps
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="log">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="log">
               <HistoryIcon className="mr-2 h-4 w-4" /> Game Log
             </TabsTrigger>
             <TabsTrigger value="rankings">
               <BarChart2 className="mr-2 h-4 w-4" /> Deck Rankings
-            </TabsTrigger>
-            <TabsTrigger value="recommendations">
-                <BrainCircuit className="mr-2 h-4 w-4" /> Recommendations
             </TabsTrigger>
           </TabsList>
           
@@ -272,9 +205,6 @@ export default function History({ history, stats, onClearHistory }: HistoryProps
               </Table>
             </div>
           </TabsContent>
-           <TabsContent value="recommendations" className="mt-4">
-                {isClient ? <Recommendations history={history} stats={stats} /> : <p className="text-center text-muted-foreground">Loading...</p>}
-            </TabsContent>
         </Tabs>
       </CardContent>
     </Card>
